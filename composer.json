@@ -1,0 +1,10 @@
+{
+    "name": "offbeatwp/acf-core",
+    "authors": [
+        {
+            "name": "Chris Schrijver",
+            "email": "chris@raow.nl"
+        }
+    ],
+    "require": {}
+}
