@@ -1,5 +1,5 @@
 <?php
-namespace OffbeatWP\Tools\Acf\Integrations;
+namespace OffbeatWP\AcfCore\Integrations;
 
 class AcfFieldGravityForms extends \acf_field
 {

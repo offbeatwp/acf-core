@@ -1,5 +1,5 @@
 <?php
-namespace OffbeatWP\Tools\Acf;
+namespace OffbeatWP\AcfCore;
 
 class FieldsMapper {
     public $fields = [];
