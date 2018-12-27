@@ -10,6 +10,6 @@
         "psr-4": {
             "OffbeatWP\\AcfCore": "src"
         }
-    }
+    },
     "require": {}
 }
