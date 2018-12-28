@@ -1,5 +1,7 @@
 {
     "name": "offbeatwp/acf-core",
+    "description": "Shared functionality for the other OffbeatWP ACF services",
+    "license": "MIT",
     "authors": [
         {
             "name": "Chris Schrijver",
