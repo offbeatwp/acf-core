@@ -86,7 +86,7 @@ class FieldsMapper {
                     $mappedField['post_type'][] = $field['data'];
                 }
 
-                $mappedField['return_format'] = 'object';
+                $mappedField['return_format'] = 'id';
                 break;
             case 'taxonomy':
                 $mappedField['taxonomy'] = $field['taxonomies'];
