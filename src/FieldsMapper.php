@@ -2,41 +2,48 @@
 namespace OffbeatWP\AcfCore;
 
 class FieldsMapper {
-    public $fields = [];
+    public $form = [];
     public $mappedFields = [];
     public $keyPrefix = '';
 
-    public function __construct($fields, $keyPrefix = '')
+    public function __construct($form, $keyPrefix = '')
     {
-        $this->fields = $fields;
+        $this->fields = $form;
         $this->keyPrefix = $keyPrefix;
     }
 
-    public function map($fields = null, $global = true)
+    public function map($form = null, $global = true)
     {
         $root = false;
         $mapping = null;        
 
-        if(is_null($fields)) {
+        if(is_null($form)) {
             $root = true;
-            $fields = $this->fields;
+            $form = $this->fields;
         }
 
-        if (isset($fields['type'])) {
-            $mapping[] = $this->mapField($fields, $global);
+        if ($form->getType() == 'field') {
+            $mapping[] = $this->mapField($form, $global);
         } else {
-            foreach ($fields as $entry) {
-                if (isset($entry['name'])) {
-                    $mapping[] = $this->mapField($entry, $global);
-                } elseif (isset($entry['fields'])) {
-                    $mapping[] = $this->mapSection($entry);
-                } else {
-                    $mapping[] = $this->mapTab($entry);
+            $form->each(function ($entry) use (&$mapping, $global) {
+                switch($entry->getType()) {
+                    case 'tab':
+                        $mapping[] = $this->mapTab($entry);
+                        break;
+                    case 'section':
+                        $mapping[] = $this->mapSection($entry);
+                        break;
+                    case 'repeater':
+                    case 'field':
+                        $mapping[] = $this->mapField($entry, $global);
+                        break;
                 }
-            }
+            });
         }
 
-        if ($root) return $this->mappedFields;
+        if ($root) {
+            return $this->mappedFields;
+        }
 
         return $mapping;
         
@@ -44,42 +51,48 @@ class FieldsMapper {
 
     public function mapField($field, $global)
     {
+        $fieldType = $field->getType();
+
+        if (method_exists($field, 'getFieldType')) {
+            $fieldType = $field->getFieldType();
+        }
+
         $mappedField = [
-            'key'           => $this->getKey('field', $field['name']),
-            'label'         => $field['label'],
-            'name'          => $field['name'],
-            'type'          => $this->mapFieldType($field['type']),
+            'key'           => $this->suffixId('field', $field->getId()),
+            'label'         => $field->getLabel(),
+            'name'          => $field->getId(),
+            'type'          => $this->mapFieldType($fieldType),
             'required'      => 0,
         ];
 
-        if (isset($field['default'])) 
-            $mappedField['default_value'] = $field['default'];
+        if ($field->getAttribute('default')) 
+            $mappedField['default_value'] = $field->getAttribute('default');
 
-        if (isset($field['placeholder'])) 
-            $mappedField['placeholder'] = $field['placeholder'];
+        if ($field->getAttribute('placeholder')) 
+            $mappedField['placeholder'] = $field->getAttribute('placeholder');
 
-        if (isset($field['multiple'])) 
-            $mappedField['multiple'] = $field['multiple'];
+        if ($field->getAttribute('multiple')) 
+            $mappedField['multiple'] = $field->getAttribute('multiple');
 
-        switch ($mappedField['type']) {
+        switch ($fieldType) {
             case 'repeater':
                 $mappedField['layout'] = 'block';
-                $mappedField['sub_fields'] = $this->map($field['fields'], false);
+                $mappedField['sub_fields'] = $this->map($field, false);
 
-                if (isset($field['collapsed'])) {
-                    $mappedField['collapsed'] = $this->getKey('field', $field['collapsed']);
+                if ($field->getAttribute('collapsed')) {
+                    $mappedField['collapsed'] = $this->suffixId('field', $field->getAttribute('collapsed'));
                 }
                 break;
             case 'select':
             case 'checkbox':
-                $mappedField['choices'] = $field['options'];
+                $mappedField['choices'] = $field->getOptions();
                 $mappedField['return_format'] = 'value';
                 break;
             case 'post_object':
                 $mappedField['post_type'] = [];
 
-                if (isset($field['postTypes']) && !empty($field['postTypes'])) {
-                    $mappedField['post_type'] = array_merge($mappedField['post_type'], $field['postTypes']);
+                if ($field->getAttribute('post_types')) {
+                    $mappedField['post_type'] = array_merge($mappedField['post_type'], $field->getAttribute('post_types'));
                 }
 
                 if (isset($field['data']) && !empty($field['data'])) {
@@ -89,13 +102,13 @@ class FieldsMapper {
                 $mappedField['return_format'] = 'id';
                 break;
             case 'taxonomy':
-                $mappedField['taxonomy'] = $field['taxonomies'];
+                $mappedField['taxonomy'] = $field->getAttribute('taxonomies');
                 $mappedField['return_format'] = 'id';
                 break;
             case 'image':
                 $mappedField['return_format'] = 'id';
                 break;
-        }
+         }
 
          if ($global)
             $this->mappedFields[] = $mappedField;
@@ -122,15 +135,15 @@ class FieldsMapper {
     public function mapSection($section, $global = true)
     {
         $mappedSection = [
-           'key'           => $this->getKey('section', $section['id']),
-           'name'          => $section['id'],
-           'label'         => $section['title'],
+           'key'           => $this->suffixId('section', $section->getId()),
+           'name'          => $section->getId(),
+           'label'         => $section->getLabel(),
            'type'          => 'group',
            'layout'        => 'block',
         ];
 
-        if (isset($section['fields'])) {
-           $mappedSection['sub_fields'] = $this->map($section['fields'], false);
+        if ($section->isNotEmpty()) {
+           $mappedSection['sub_fields'] = $this->map($section, false);
         }
 
         if ($global)
@@ -143,8 +156,8 @@ class FieldsMapper {
     public function mapTab($tab, $global = true)
     {
         $mappedTab = [
-            'key'   => $this->getKey('tab', $tab['id']),
-            'label' => $tab['title'],
+            'key'   => $this->suffixId('tab', $tab->getId()),
+            'label' => $tab->getLabel(),
             'name'  => '',
             'type'  => 'tab',
             'placement' => 'top',
@@ -154,18 +167,14 @@ class FieldsMapper {
         if ($global)
             $this->mappedFields[] = $mappedTab;
 
-        if (isset($tab['sections'])) {
-            $this->map($tab['sections']);
-        }
-
-        if (isset($tab['fields'])) {
-            $this->map($tab['fields']);
+        if ($tab->isNotEmpty()) {
+            $this->map($tab);
         }
 
         return $mappedTab;
     }
 
-    public function getKey($type, $key) {
+    public function suffixId($type, $key) {
         $suffix = !empty($this->keyPrefix) ? '_' . $this->keyPrefix : '';
         return $type . $suffix . '_' . $key;
     }
