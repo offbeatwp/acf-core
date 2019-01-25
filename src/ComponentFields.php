@@ -28,6 +28,8 @@ class ComponentFields {
             $fields = array_merge($acfDefinedFields, $fields);
         }
 
+        $fields = self::normalizeFields($fields);        
+
         return $fields;
     }
 
@@ -44,6 +46,26 @@ class ComponentFields {
 
             if(!empty($fieldGroupFields))
                 $fields = array_merge($fields, $fieldGroupFields);
+        }
+
+        return $fields;
+    }
+
+    public static function normalizeFields($fields)
+    {
+        if (!empty($fields)) foreach ($fields as $fieldKey => $field) {
+
+            if (isset($field['ID'])) {
+                unset($fields[$fieldKey]['ID']);
+            }
+
+            if (isset($field['parent'])) {
+                unset($fields[$fieldKey]['parent']);
+            }
+
+            if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
+                $field['sub_fields'] = self::normalizeFields($field['sub_fields']);
+            }
         }
 
         return $fields;
