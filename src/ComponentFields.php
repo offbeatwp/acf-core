@@ -2,7 +2,7 @@
 namespace OffbeatWP\AcfCore;
 
 class ComponentFields {
-    public static function get($componentId)
+    public static function get($componentId, $suffix = '')
     {
         $fields = [];
         $component = offbeat('components')->get($componentId);
@@ -30,6 +30,10 @@ class ComponentFields {
 
         $fields = self::normalizeFields($fields);        
 
+        if (!empty($suffix)) {
+            $fields = self::suffixFieldKeys($fields, $suffix);
+        }
+
         return $fields;
     }
 
@@ -55,16 +59,29 @@ class ComponentFields {
     {
         if (!empty($fields)) foreach ($fields as $fieldKey => $field) {
 
-            if (isset($field['ID'])) {
-                unset($fields[$fieldKey]['ID']);
-            }
-
             if (isset($field['parent'])) {
                 unset($fields[$fieldKey]['parent']);
             }
 
             if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
-                $field['sub_fields'] = self::normalizeFields($field['sub_fields']);
+                $fields[$fieldKey]['sub_fields'] = self::normalizeFields($field['sub_fields']);
+            }
+        }
+
+        return $fields;
+    }
+
+
+    public static function suffixFieldKeys($fields, $suffix)
+    {
+        if (!empty($fields)) foreach ($fields as $fieldKey => $field) {
+
+            if (isset($field['key'])) {
+                $fields[$fieldKey]['key'] .= "_{$suffix}";
+            }
+
+            if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
+                $fields[$fieldKey]['sub_fields'] = self::suffixFieldKeys($field['sub_fields'], $suffix);
             }
         }
 
