@@ -74,6 +74,9 @@ class FieldsMapper {
         if ($field->getAttribute('multiple')) 
             $mappedField['multiple'] = $field->getAttribute('multiple');
 
+        if ($field->getAttribute('class')) 
+            $mappedField['wrapper']['class'] = $field->getAttribute('class');
+
         switch ($fieldType) {
             case 'repeater':
                 $mappedField['layout'] = 'block';
@@ -107,6 +110,10 @@ class FieldsMapper {
                 break;
             case 'image':
                 $mappedField['return_format'] = 'id';
+                break;
+            case 'flexible_content':
+                $mappedField['layouts'] = $field->getAttribute('layouts');
+                $mappedField['button_label'] = $field->getAttribute('button_label');
                 break;
          }
 
