@@ -64,8 +64,7 @@ class FieldsMapperReverse {
                     break;
 
                 case 'link':
-                    // $formField = Fields\Radio::make($field['name'], $field['label'])
-                    //     ->addOptions($field['choices']);
+                    $formField = Fields\Link::make($field['name'], $field['label']);
 
                     break;
 
