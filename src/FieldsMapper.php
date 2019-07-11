@@ -172,6 +172,10 @@ class FieldsMapper {
                 break;
          }
 
+         if ($returnFormat = $field->getAttribute('return_format')) {
+            $mappedField['return_format'] = $returnFormat;
+         }
+
          if ($global)
             $this->mappedFields[] = $mappedField;
 
