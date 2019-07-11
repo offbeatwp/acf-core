@@ -5,6 +5,8 @@ class FieldsMapper {
     public $form = [];
     public $mappedFields = [];
     public $keyPrefix = '';
+    public $namePrefix = '';
+    public $context = null;
 
     public function __construct($form, $keyPrefix = '')
     {
@@ -15,7 +17,7 @@ class FieldsMapper {
     public function map($form = null, $global = true)
     {
         $root = false;
-        $mapping = null;        
+        $mapping = [];        
 
         if(is_null($form)) {
             $root = true;
@@ -27,6 +29,18 @@ class FieldsMapper {
         } else {
             $form->each(function ($entry) use (&$mapping, $global) {
                 switch($entry->getType()) {
+                    case 'form':
+                        $formFields = $this->mapForm($entry, $global);
+
+                        if (!empty($formFields)) foreach ($formFields as $formField) {
+                            if ($global) {
+                                $this->mappedFields[] = $formField;
+                            } else {
+                                $mapping[] = $formField;
+                            }
+                        }
+                        
+                        break;
                     case 'tab':
                         $mapping[] = $this->mapTab($entry);
                         break;
@@ -49,6 +63,24 @@ class FieldsMapper {
         
     }
 
+    public function mapForm($form, $global = true)
+    {
+        $idPrefixes = [];
+        $idPrefixes[] = $this->fields->getFieldPrefix();
+        $idPrefixes[] = $form->getFieldPrefix();
+        $idPrefixes = array_filter($idPrefixes);
+
+        $fieldsMapper = new self($form, implode('_', $idPrefixes));
+
+        if ($this->getContext()) {
+            $fieldsMapper->setContext($this->getContext());
+        }
+
+        $mappedFields = $fieldsMapper->map();
+
+        return $mappedFields;
+    }
+
     public function mapField($field, $global)
     {
         $fieldType = $field->getType();
@@ -57,8 +89,20 @@ class FieldsMapper {
             $fieldType = $field->getFieldType();
         }
 
+        $key = $field->getAttribute('key');
+        if (!$key) {
+            $key = $this->prefixId('field', $field->getId());
+        } else {
+            $prefix = !empty($this->keyPrefix) ? $this->keyPrefix . '_' : '';
+            $key = $prefix . $key;
+        }
+
+        if ($this->getContext()) {
+            $key = $key . '_' . $this->getContext();
+        }
+
         $mappedField = [
-            'key'           => $this->suffixId('field', $field->getId()),
+            'key'           => $key,
             'label'         => $field->getLabel(),
             'name'          => $field->getId(),
             'type'          => $this->mapFieldType($fieldType),
@@ -74,8 +118,17 @@ class FieldsMapper {
         if ($field->getAttribute('multiple')) 
             $mappedField['multiple'] = $field->getAttribute('multiple');
 
+        if ($field->getAttribute('layout')) 
+            $mappedField['layout'] = $field->getAttribute('layout');
+
         if ($field->getAttribute('class')) 
             $mappedField['wrapper']['class'] = $field->getAttribute('class');
+
+        if ($field->getAttribute('width')) 
+            $mappedField['wrapper']['width'] = $field->getAttribute('width');
+
+        if ($field->getAttribute('id')) 
+            $mappedField['wrapper']['id'] = $field->getAttribute('id');
 
         switch ($fieldType) {
             case 'repeater':
@@ -83,11 +136,13 @@ class FieldsMapper {
                 $mappedField['sub_fields'] = $this->map($field, false);
 
                 if ($field->getAttribute('collapsed')) {
-                    $mappedField['collapsed'] = $this->suffixId('field', $field->getAttribute('collapsed'));
+                    $mappedField['collapsed'] = $this->prefixId('field', $field->getAttribute('collapsed'));
                 }
                 break;
             case 'select':
+            case 'button_group':
             case 'checkbox':
+            case 'radio':
                 $mappedField['choices'] = $field->getOptions();
                 $mappedField['return_format'] = 'value';
                 break;
@@ -142,7 +197,7 @@ class FieldsMapper {
     public function mapSection($section, $global = true)
     {
         $mappedSection = [
-           'key'           => $this->suffixId('section', $section->getId()),
+           'key'           => $this->prefixId('section', $section->getId()),
            'name'          => $section->getId(),
            'label'         => $section->getLabel(),
            'type'          => 'group',
@@ -163,7 +218,7 @@ class FieldsMapper {
     public function mapTab($tab, $global = true)
     {
         $mappedTab = [
-            'key'   => $this->suffixId('tab', $tab->getId()),
+            'key'   => $this->prefixId('tab', $tab->getId()),
             'label' => $tab->getLabel(),
             'name'  => '',
             'type'  => 'tab',
@@ -181,8 +236,23 @@ class FieldsMapper {
         return $mappedTab;
     }
 
-    public function suffixId($type, $key) {
-        $suffix = !empty($this->keyPrefix) ? '_' . $this->keyPrefix : '';
-        return $type . $suffix . '_' . $key;
+    public function prefixId($type, $key) {
+        $prefix = !empty($this->keyPrefix) ? '_' . $this->keyPrefix : '';
+        return $type . $prefix . '_' . $key;
+    }
+
+    public function prefixName($name) {
+        $prefix = !empty($this->namePrefix) ? $this->namePrefix . '_' : '';
+        return $prefix . $name;
+    }
+
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    public function setContext($context)
+    {
+        $this->context = $context;
     }
 }
