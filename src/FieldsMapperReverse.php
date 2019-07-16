@@ -7,8 +7,9 @@ use \OffbeatWP\AcfCore\Fields\AcfField;
 class FieldsMapperReverse {
     public static function map($fields, $form)
     {
-        $formField = null; 
         if (!empty($fields)) foreach($fields as $field) {
+            $formField = null; 
+
             switch($field['type']) {
                 case 'repeater':
                     $form->addRepeater($field['name'], $field['label']);

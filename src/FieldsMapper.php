@@ -174,7 +174,15 @@ class FieldsMapper {
                 $mappedField['button_label'] = $field->getAttribute('button_label');
                 break;
             case 'acffield':
-                $mappedField = array_merge($mappedField, $field->getAttribute('acffield'));
+                $acfFieldContent = $field->getAttribute('acffield');
+
+                if (!empty($acfFieldContent) && is_array($acfFieldContent)) {
+                    unset($acfFieldContent['key']);
+                    $mappedField = array_merge($mappedField, $acfFieldContent);
+                } else {
+                    continue;
+                }
+
                 break;
          }
 
