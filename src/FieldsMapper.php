@@ -109,6 +109,9 @@ class FieldsMapper {
             'required'      => 0,
         ];
 
+        if ($field->getAttribute('required')) 
+            $mappedField['required'] = $field->getAttribute('required');
+
         if ($field->getAttribute('default')) 
             $mappedField['default_value'] = $field->getAttribute('default');
 
@@ -169,6 +172,9 @@ class FieldsMapper {
             case 'flexible_content':
                 $mappedField['layouts'] = $field->getAttribute('layouts');
                 $mappedField['button_label'] = $field->getAttribute('button_label');
+                break;
+            case 'acffield':
+                $mappedField = array_merge($mappedField, $field->getAttribute('acffield'));
                 break;
          }
 

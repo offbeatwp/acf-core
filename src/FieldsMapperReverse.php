@@ -2,6 +2,7 @@
 namespace OffbeatWP\AcfCore;
 
 use \OffbeatWP\Form\Fields;
+use \OffbeatWP\AcfCore\Fields\AcfField;
 
 class FieldsMapperReverse {
     public static function map($fields, $form)
@@ -13,11 +14,6 @@ class FieldsMapperReverse {
                     $form->addRepeater($field['name'], $field['label']);
 
                     FieldsMapperReverse::map($field['sub_fields'], $form);
-
-                    break;
-
-                    case 'clone':
-                    // $form->addRepeater($field['name'], $field['label']);
 
                     break;
 
@@ -78,14 +74,9 @@ class FieldsMapperReverse {
 
                     break;
                     
-
-                case 'font-awesome':
-                    // $form->addRepeater($field['name'], $field['label']);
-
-                    break;
-
-                case 'oembed':
-                    // $form->addRepeater($field['name'], $field['label']);
+                default:
+                    $formField = AcfField::make($field['name'], $field['label']);
+                    $formField->setAttribute('acffield', $field);
 
                     break;
             }
