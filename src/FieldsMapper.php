@@ -150,14 +150,16 @@ class FieldsMapper {
                 $mappedField['return_format'] = 'value';
                 break;
             case 'post_object':
+            case 'post':
+            case 'posts':
                 $mappedField['post_type'] = [];
 
                 if ($field->getAttribute('post_types')) {
                     $mappedField['post_type'] = array_merge($mappedField['post_type'], $field->getAttribute('post_types'));
                 }
 
-                if (isset($field['data']) && !empty($field['data'])) {
-                    $mappedField['post_type'][] = $field['data'];
+                if ($fieldType == 'posts') {
+                    $mappedField['multiple'] = 1;
                 }
 
                 $mappedField['return_format'] = 'id';
@@ -203,6 +205,7 @@ class FieldsMapper {
                 $fieldType = 'wysiwyg';
                 break;
             case 'posts':
+            case 'post':
                 $fieldType = 'post_object';
                 break;
             case 'terms':
