@@ -121,6 +121,9 @@ class FieldsMapper {
         if ($field->getAttribute('multiple')) 
             $mappedField['multiple'] = $field->getAttribute('multiple');
 
+            if ($field->getAttribute('field_type')) 
+            $mappedField['field_type'] = $field->getAttribute('field_type');
+
         if ($field->getAttribute('layout')) 
             $mappedField['layout'] = $field->getAttribute('layout');
 
@@ -165,7 +168,8 @@ class FieldsMapper {
                 $mappedField['return_format'] = 'id';
                 break;
             case 'taxonomy':
-                $mappedField['taxonomy'] = $field->getAttribute('taxonomies');
+            case 'terms':
+                $mappedField['taxonomy'] = $field->getAttribute('taxonomy');
                 $mappedField['return_format'] = 'id';
                 break;
             case 'image':
@@ -195,6 +199,7 @@ class FieldsMapper {
          if ($global)
             $this->mappedFields[] = $mappedField;
 
+            
         return $mappedField;
     }
 
