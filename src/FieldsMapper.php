@@ -127,6 +127,9 @@ class FieldsMapper {
         if ($field->getAttribute('layout')) 
             $mappedField['layout'] = $field->getAttribute('layout');
 
+        if ($field->getAttribute('rows')) 
+            $mappedField['rows'] = $field->getAttribute('rows');
+
         if ($field->getAttribute('class')) 
             $mappedField['wrapper']['class'] = $field->getAttribute('class');
 
