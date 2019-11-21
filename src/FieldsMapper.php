@@ -65,12 +65,7 @@ class FieldsMapper {
 
     public function mapForm($form, $global = true)
     {
-        $idPrefixes = [];
-        $idPrefixes[] = $this->fields->getFieldPrefix();
-        $idPrefixes[] = $form->getFieldPrefix();
-        $idPrefixes = array_filter($idPrefixes);
-
-        $fieldsMapper = new self($form, implode('_', $idPrefixes));
+        $fieldsMapper = new self($form, $this->keyPrefix);
 
         if ($this->getContext()) {
             $fieldsMapper->setContext($this->getContext());
@@ -105,6 +100,7 @@ class FieldsMapper {
             'key'           => $key,
             'label'         => $field->getLabel(),
             'name'          => $field->getId(),
+            '_name'          => $field->getId(),
             'type'          => $this->mapFieldType($fieldType),
             'required'      => 0,
         ];
@@ -179,6 +175,7 @@ class FieldsMapper {
                 $mappedField['return_format'] = 'id';
                 break;
             case 'flexible_content':
+            case 'offbeat_components':
                 $mappedField['layouts'] = $field->getAttribute('layouts');
                 $mappedField['button_label'] = $field->getAttribute('button_label');
                 break;
@@ -267,6 +264,7 @@ class FieldsMapper {
 
     public function prefixId($type, $key) {
         $prefix = !empty($this->keyPrefix) ? '_' . $this->keyPrefix : '';
+
         return $type . $prefix . '_' . $key;
     }
 
