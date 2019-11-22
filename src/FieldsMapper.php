@@ -65,7 +65,12 @@ class FieldsMapper {
 
     public function mapForm($form, $global = true)
     {
-        $fieldsMapper = new self($form, $this->keyPrefix);
+        $idPrefixes = [];
+        $idPrefixes[] = $this->fields->getFieldPrefix();
+        $idPrefixes[] = $form->getFieldPrefix();
+        $idPrefixes = array_filter($idPrefixes);
+
+        $fieldsMapper = new self($form, implode('_', $idPrefixes));
 
         if ($this->getContext()) {
             $fieldsMapper->setContext($this->getContext());
@@ -225,6 +230,7 @@ class FieldsMapper {
         $mappedSection = [
            'key'           => $this->prefixId('section', $section->getId()),
            'name'          => $section->getId(),
+           '_name'          => $section->getId(),
            'label'         => $section->getLabel(),
            'type'          => 'group',
            'layout'        => 'block',
