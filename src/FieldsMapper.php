@@ -130,6 +130,10 @@ class FieldsMapper {
         if ($field->getAttribute('rows')) 
             $mappedField['rows'] = $field->getAttribute('rows');
 
+        if ($field->getAttribute('conditional_logic')) {
+            $mappedField['conditional_logic'] = $this->transformKeysConditionalLogic($field->getAttribute('conditional_logic'));
+        }
+
         if ($field->getAttribute('class')) 
             $mappedField['wrapper']['class'] = $field->getAttribute('class');
 
@@ -283,5 +287,26 @@ class FieldsMapper {
     public function setContext($context)
     {
         $this->context = $context;
+    }
+
+    public function transformKeysConditionalLogic($conditionalLogic) {
+        foreach ($conditionalLogic as $groupIndex => $fields) {
+            foreach ($fields as $fieldIndex => $field) {
+                $fieldKey = $field['field'];
+
+                $prefix = !empty($this->keyPrefix) ? $this->keyPrefix . '_' : '';
+                $fieldKey = $prefix . $fieldKey;
+    
+                if ($this->getContext()) {
+                    $fieldKey = $fieldKey . '_' . $this->getContext();
+                }
+
+                $fields[$fieldIndex]['field'] = $fieldKey;
+            }
+
+            $conditionalLogic[$groupIndex] = $fields;
+        }
+
+        return $conditionalLogic;
     }
 }
