@@ -122,7 +122,7 @@ class FieldsMapper {
         if ($field->getAttribute('multiple')) 
             $mappedField['multiple'] = $field->getAttribute('multiple');
 
-            if ($field->getAttribute('field_type')) 
+        if ($field->getAttribute('field_type')) 
             $mappedField['field_type'] = $field->getAttribute('field_type');
 
         if ($field->getAttribute('layout')) 
@@ -130,6 +130,9 @@ class FieldsMapper {
 
         if ($field->getAttribute('rows')) 
             $mappedField['rows'] = $field->getAttribute('rows');
+
+        if ($field->getAttribute('new_lines')) 
+            $mappedField['new_lines'] = $field->getAttribute('new_lines');
 
         if ($field->getAttribute('class')) 
             $mappedField['wrapper']['class'] = $field->getAttribute('class');
