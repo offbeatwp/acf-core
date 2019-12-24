@@ -192,8 +192,6 @@ class FieldsMapper {
                 if (!empty($acfFieldContent) && is_array($acfFieldContent)) {
                     unset($acfFieldContent['key']);
                     $mappedField = array_merge($mappedField, $acfFieldContent);
-                } else {
-                    continue;
                 }
 
                 break;
