@@ -105,6 +105,7 @@ class FieldsMapper {
             'key'           => $key,
             'label'         => $field->getLabel(),
             'name'          => $field->getId(),
+            '_name'          => $field->getId(),
             'type'          => $this->mapFieldType($fieldType),
             'required'      => 0,
         ];
@@ -121,7 +122,7 @@ class FieldsMapper {
         if ($field->getAttribute('multiple')) 
             $mappedField['multiple'] = $field->getAttribute('multiple');
 
-            if ($field->getAttribute('field_type')) 
+        if ($field->getAttribute('field_type')) 
             $mappedField['field_type'] = $field->getAttribute('field_type');
 
         if ($field->getAttribute('layout')) 
@@ -133,9 +134,11 @@ class FieldsMapper {
         if ($field->getAttribute('rows')) 
             $mappedField['rows'] = $field->getAttribute('rows');
 
-        if ($field->getAttribute('conditional_logic')) {
+        if ($field->getAttribute('new_lines')) 
+            $mappedField['new_lines'] = $field->getAttribute('new_lines');
+
+        if ($field->getAttribute('conditional_logic'))
             $mappedField['conditional_logic'] = $this->transformKeysConditionalLogic($field->getAttribute('conditional_logic'));
-        }
 
         if ($field->getAttribute('class')) 
             $mappedField['wrapper']['class'] = $field->getAttribute('class');
@@ -186,6 +189,7 @@ class FieldsMapper {
                 $mappedField['return_format'] = 'id';
                 break;
             case 'flexible_content':
+            case 'offbeat_components':
                 $mappedField['layouts'] = $field->getAttribute('layouts');
                 $mappedField['button_label'] = $field->getAttribute('button_label');
                 break;
@@ -233,6 +237,7 @@ class FieldsMapper {
         $mappedSection = [
            'key'           => $this->prefixId('section', $section->getId()),
            'name'          => $section->getId(),
+           '_name'          => $section->getId(),
            'label'         => $section->getLabel(),
            'type'          => 'group',
            'layout'        => 'block',
@@ -272,6 +277,7 @@ class FieldsMapper {
 
     public function prefixId($type, $key) {
         $prefix = !empty($this->keyPrefix) ? '_' . $this->keyPrefix : '';
+
         return $type . $prefix . '_' . $key;
     }
 
