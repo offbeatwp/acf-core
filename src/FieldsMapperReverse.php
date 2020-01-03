@@ -14,6 +14,10 @@ class FieldsMapperReverse {
                 case 'repeater':
                     $form->addRepeater($field['name'], $field['label']);
 
+                    if (!isset($field['sub_fields'])) {
+                        $field['sub_fields'] = [];
+                    }
+
                     FieldsMapperReverse::map($field['sub_fields'], $form);
 
                     break;
