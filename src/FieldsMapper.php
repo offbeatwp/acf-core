@@ -127,6 +127,9 @@ class FieldsMapper {
         if ($field->getAttribute('layout')) 
             $mappedField['layout'] = $field->getAttribute('layout');
 
+        if ($field->getAttribute('new_lines')) 
+            $mappedField['new_lines'] = $field->getAttribute('new_lines');
+        
         if ($field->getAttribute('rows')) 
             $mappedField['rows'] = $field->getAttribute('rows');
 
@@ -192,8 +195,6 @@ class FieldsMapper {
                 if (!empty($acfFieldContent) && is_array($acfFieldContent)) {
                     unset($acfFieldContent['key']);
                     $mappedField = array_merge($mappedField, $acfFieldContent);
-                } else {
-                    continue;
                 }
 
                 break;
