@@ -110,6 +110,10 @@ class FieldsMapperReverse {
                 if (isset($field['placeholder'])) {
                     $formField->setAttribute('placeholder', $field['placeholder']);
                 }
+
+                if (isset($field['conditional_logic']) && !empty($field['conditional_logic'])) {
+                    $formField->setAttribute('conditional_logic', $field['conditional_logic']);
+                }
         
                 if (isset($field['wrapper'])) {
                     if (isset($field['wrapper']['width'])) {
