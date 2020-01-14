@@ -137,8 +137,9 @@ class FieldsMapper {
         if ($field->getAttribute('new_lines')) 
             $mappedField['new_lines'] = $field->getAttribute('new_lines');
 
-        if ($field->getAttribute('conditional_logic'))
-            $mappedField['conditional_logic'] = $this->transformKeysConditionalLogic($field->getAttribute('conditional_logic'));
+        if ($field->getAttribute('conditional_logic')) {
+            $mappedField['conditional_logic'] = $field->getAttribute('conditional_logic');
+        }
 
         if ($field->getAttribute('class')) 
             $mappedField['wrapper']['class'] = $field->getAttribute('class');
@@ -202,6 +203,10 @@ class FieldsMapper {
                 }
 
                 break;
+         }
+
+         if (isset($mappedField['conditional_logic']) && !empty($mappedField['conditional_logic'])) {
+            $mappedField['conditional_logic'] = $this->transformKeysConditionalLogic($mappedField['conditional_logic']);
          }
 
          if ($returnFormat = $field->getAttribute('return_format')) {
