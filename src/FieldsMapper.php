@@ -137,6 +137,10 @@ class FieldsMapper {
         if ($field->getAttribute('new_lines')) 
             $mappedField['new_lines'] = $field->getAttribute('new_lines');
 
+        if ($field->getAttribute('description')) {
+            $mappedField['instructions'] = $field->getAttribute('description');
+        }
+
         if ($field->getAttribute('conditional_logic')) {
             $mappedField['conditional_logic'] = $field->getAttribute('conditional_logic');
         }
