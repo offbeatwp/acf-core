@@ -22,12 +22,6 @@ class ComponentFields {
             }
         }
 
-        $acfDefinedFields = self::getAcfDefinedFields($componentId);
-
-        if (!empty($acfDefinedFields)) {
-            $fields = array_merge($acfDefinedFields, $fields);
-        }
-
         $fields = self::normalizeFields($fields);        
 
         if (!empty($suffix)) {
