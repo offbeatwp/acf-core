@@ -137,13 +137,14 @@ class FieldsMapper {
         if ($field->getAttribute('new_lines')) 
             $mappedField['new_lines'] = $field->getAttribute('new_lines');
 
-        if ($field->getAttribute('description')) {
+        if ($field->getAttribute('description'))
             $mappedField['instructions'] = $field->getAttribute('description');
-        }
 
-        if ($field->getAttribute('conditional_logic')) {
+        if ($field->getAttribute('conditional_logic'))
             $mappedField['conditional_logic'] = $field->getAttribute('conditional_logic');
-        }
+
+        if ($field->getAttribute('allow_null')) 
+            $mappedField['allow_null'] = $field->getAttribute('allow_null');
 
         if ($field->getAttribute('class')) 
             $mappedField['wrapper']['class'] = $field->getAttribute('class');
