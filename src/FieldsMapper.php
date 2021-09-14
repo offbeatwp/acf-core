@@ -257,6 +257,7 @@ class FieldsMapper {
                 $fieldType = 'taxonomy';
                 break;
         }
+
         return $fieldType;
     }
 
