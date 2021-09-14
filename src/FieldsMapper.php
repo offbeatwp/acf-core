@@ -7,14 +7,15 @@ class FieldsMapper {
     public $keyPrefix = '';
     public $namePrefix = '';
     public $context = null;
+    public $fields;
 
-    public function __construct($form, $keyPrefix = '')
+    public function __construct($form, string $keyPrefix = '')
     {
         $this->fields = $form;
         $this->keyPrefix = $keyPrefix;
     }
 
-    public function map($form = null, $global = true)
+    public function map($form = null, bool $global = true): array
     {
         $root = false;
         $mapping = [];        
@@ -24,7 +25,7 @@ class FieldsMapper {
             $form = $this->fields;
         }
 
-        if ($form->getType() == 'field') {
+        if ($form->getType() === 'field') {
             $mapping[] = $this->mapField($form, $global);
         } else {
             $form->each(function ($entry) use (&$mapping, $global) {
@@ -32,11 +33,13 @@ class FieldsMapper {
                     case 'form':
                         $formFields = $this->mapForm($entry, $global);
 
-                        if (!empty($formFields)) foreach ($formFields as $formField) {
-                            if ($global) {
-                                $this->mappedFields[] = $formField;
-                            } else {
-                                $mapping[] = $formField;
+                        if (!empty($formFields)) {
+                            foreach ($formFields as $formField) {
+                                if ($global) {
+                                    $this->mappedFields[] = $formField;
+                                } else {
+                                    $mapping[] = $formField;
+                                }
                             }
                         }
                         
@@ -63,7 +66,7 @@ class FieldsMapper {
         
     }
 
-    public function mapForm($form, $global = true)
+    public function mapForm($form, bool $global = true): array
     {
         $idPrefixes = [];
         $idPrefixes[] = $this->fields->getFieldPrefix();
@@ -76,12 +79,10 @@ class FieldsMapper {
             $fieldsMapper->setContext($this->getContext());
         }
 
-        $mappedFields = $fieldsMapper->map();
-
-        return $mappedFields;
+        return $fieldsMapper->map();
     }
 
-    public function mapField($field, $global)
+    public function mapField($field, bool $global): array
     {
         $fieldType = $field->getType();
 
@@ -90,6 +91,7 @@ class FieldsMapper {
         }
 
         $key = $field->getAttribute('key');
+
         if (!$key) {
             $key = $this->prefixId('field', $field->getId());
         } else {
@@ -98,7 +100,7 @@ class FieldsMapper {
         }
 
         if ($this->getContext()) {
-            $key = $key . '_' . $this->getContext();
+            $key .= '_' . $this->getContext();
         }
 
         $mappedField = [
@@ -110,50 +112,65 @@ class FieldsMapper {
             'required'      => 0,
         ];
 
-        if ($field->getAttribute('required')) 
+        if ($field->getAttribute('required')) {
             $mappedField['required'] = $field->getAttribute('required');
+        }
 
-        if ($field->getAttribute('default')) 
+        if ($field->getAttribute('default')) {
             $mappedField['default_value'] = $field->getAttribute('default');
+        }
 
-        if ($field->getAttribute('placeholder')) 
+        if ($field->getAttribute('placeholder')) {
             $mappedField['placeholder'] = $field->getAttribute('placeholder');
+        }
 
-        if ($field->getAttribute('multiple')) 
+        if ($field->getAttribute('multiple')) {
             $mappedField['multiple'] = $field->getAttribute('multiple');
+        }
 
-        if ($field->getAttribute('field_type')) 
+        if ($field->getAttribute('field_type')) {
             $mappedField['field_type'] = $field->getAttribute('field_type');
+        }
 
-        if ($field->getAttribute('layout')) 
+        if ($field->getAttribute('layout')) {
             $mappedField['layout'] = $field->getAttribute('layout');
+        }
 
-        if ($field->getAttribute('new_lines')) 
+        if ($field->getAttribute('new_lines')) {
             $mappedField['new_lines'] = $field->getAttribute('new_lines');
+        }
         
-        if ($field->getAttribute('rows')) 
+        if ($field->getAttribute('rows')) {
             $mappedField['rows'] = $field->getAttribute('rows');
+        }
 
-        if ($field->getAttribute('new_lines')) 
+        if ($field->getAttribute('new_lines')) {
             $mappedField['new_lines'] = $field->getAttribute('new_lines');
+        }
 
-        if ($field->getAttribute('description'))
+        if ($field->getAttribute('description')) {
             $mappedField['instructions'] = $field->getAttribute('description');
+        }
 
-        if ($field->getAttribute('conditional_logic'))
+        if ($field->getAttribute('conditional_logic')) {
             $mappedField['conditional_logic'] = $field->getAttribute('conditional_logic');
+        }
 
-        if ($field->getAttribute('allow_null')) 
+        if ($field->getAttribute('allow_null')) {
             $mappedField['allow_null'] = $field->getAttribute('allow_null');
+        }
 
-        if ($field->getAttribute('class')) 
+        if ($field->getAttribute('class')) {
             $mappedField['wrapper']['class'] = $field->getAttribute('class');
+        }
 
-        if ($field->getAttribute('width')) 
+        if ($field->getAttribute('width')) {
             $mappedField['wrapper']['width'] = $field->getAttribute('width');
+        }
 
-        if ($field->getAttribute('id')) 
+        if ($field->getAttribute('id')) {
             $mappedField['wrapper']['id'] = $field->getAttribute('id');
+        }
 
         switch ($fieldType) {
             case 'repeater':
@@ -180,7 +197,7 @@ class FieldsMapper {
                     $mappedField['post_type'] = array_merge($mappedField['post_type'], $field->getAttribute('post_types'));
                 }
 
-                if ($fieldType == 'posts') {
+                if ($fieldType === 'posts') {
                     $mappedField['multiple'] = 1;
                 }
 
@@ -218,14 +235,15 @@ class FieldsMapper {
             $mappedField['return_format'] = $returnFormat;
          }
 
-         if ($global)
-            $this->mappedFields[] = $mappedField;
+         if ($global) {
+             $this->mappedFields[] = $mappedField;
+         }
 
             
         return $mappedField;
     }
 
-    public function mapFieldType($fieldType, $global = true)
+    public function mapFieldType(string $fieldType, bool $global = true): string
     {  
         switch ($fieldType) {
             case 'editor':
@@ -242,29 +260,29 @@ class FieldsMapper {
         return $fieldType;
     }
 
-    public function mapSection($section, $global = true)
+    public function mapSection($section, bool $global = true): array
     {
         $mappedSection = [
            'key'           => $this->prefixId('section', $section->getId()),
            'name'          => $section->getId(),
-           '_name'          => $section->getId(),
+           '_name'         => $section->getId(),
            'label'         => $section->getLabel(),
            'type'          => 'group',
-           'layout'        => 'block',
+           'layout'        => 'block'
         ];
 
         if ($section->isNotEmpty()) {
            $mappedSection['sub_fields'] = $this->map($section, false);
         }
 
-        if ($global)
-           $this->mappedFields[] = $mappedSection;
+        if ($global) {
+            $this->mappedFields[] = $mappedSection;
+        }
 
         return $mappedSection;
-        // return [];
     }
 
-    public function mapTab($tab, $global = true)
+    public function mapTab($tab, bool $global = true): array
     {
         $mappedTab = [
             'key'   => $this->prefixId('tab', $tab->getId()),
@@ -272,11 +290,12 @@ class FieldsMapper {
             'name'  => '',
             'type'  => 'tab',
             'placement' => 'top',
-            'endpoint' => 0,
+            'endpoint' => 0
         ];
 
-        if ($global)
+        if ($global) {
             $this->mappedFields[] = $mappedTab;
+        }
 
         if ($tab->isNotEmpty()) {
             $this->map($tab);
@@ -285,13 +304,15 @@ class FieldsMapper {
         return $mappedTab;
     }
 
-    public function prefixId($type, $key) {
+    public function prefixId(string $type, string $key): string
+    {
         $prefix = !empty($this->keyPrefix) ? '_' . $this->keyPrefix : '';
 
         return $type . $prefix . '_' . $key;
     }
 
-    public function prefixName($name) {
+    public function prefixName(string $name): string
+    {
         $prefix = !empty($this->namePrefix) ? $this->namePrefix . '_' : '';
         return $prefix . $name;
     }
@@ -315,7 +336,7 @@ class FieldsMapper {
                 $fieldKey = $prefix . $fieldKey;
     
                 if ($this->getContext()) {
-                    $fieldKey = $fieldKey . '_' . $this->getContext();
+                    $fieldKey .= '_' . $this->getContext();
                 }
 
                 $fields[$fieldIndex]['field'] = $fieldKey;
