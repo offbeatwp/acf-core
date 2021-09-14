@@ -227,7 +227,7 @@ class FieldsMapper {
                 break;
          }
 
-         if (isset($mappedField['conditional_logic']) && !empty($mappedField['conditional_logic'])) {
+         if (!empty($mappedField['conditional_logic'])) {
             $mappedField['conditional_logic'] = $this->transformKeysConditionalLogic($mappedField['conditional_logic']);
          }
 
@@ -328,22 +328,25 @@ class FieldsMapper {
         $this->context = $context;
     }
 
-    public function transformKeysConditionalLogic($conditionalLogic) {
-        foreach ($conditionalLogic as $groupIndex => $fields) {
-            foreach ($fields as $fieldIndex => $field) {
-                $fieldKey = $field['field'];
-
+    /**
+     * @param string[][][] $conditionalLogic
+     * @return string[][][]
+     */
+    public function transformKeysConditionalLogic(array $conditionalLogic): array
+    {
+        foreach ($conditionalLogic as $groupIndex => $conditions) {
+            foreach ($conditions as $conditionIndex => $condition) {
                 $prefix = !empty($this->keyPrefix) ? $this->keyPrefix . '_' : '';
-                $fieldKey = $prefix . $fieldKey;
+                $fieldKey = $prefix . $condition['field'];
     
                 if ($this->getContext()) {
                     $fieldKey .= '_' . $this->getContext();
                 }
 
-                $fields[$fieldIndex]['field'] = $fieldKey;
+                $conditions[$conditionIndex]['field'] = $fieldKey;
             }
 
-            $conditionalLogic[$groupIndex] = $fields;
+            $conditionalLogic[$groupIndex] = $conditions;
         }
 
         return $conditionalLogic;
