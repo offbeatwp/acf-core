@@ -63,7 +63,6 @@ class FieldsMapper {
         }
 
         return $mapping;
-        
     }
 
     public function mapForm($form, bool $global = true): array
@@ -107,7 +106,7 @@ class FieldsMapper {
             'key'           => $key,
             'label'         => $field->getLabel(),
             'name'          => $field->getId(),
-            '_name'          => $field->getId(),
+            '_name'         => $field->getId(),
             'type'          => $this->mapFieldType($fieldType),
             'required'      => 0,
         ];
