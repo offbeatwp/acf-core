@@ -128,6 +128,12 @@ class FieldsMapper {
             $mappedField['multiple'] = $field->getAttribute('multiple');
         }
 
+        if ($field->getAttribute('ui'))
+            $mappedField['ui'] = $field->getAttribute('ui');
+
+        if ($field->getAttribute('ajax'))
+            $mappedField['ajax'] = $field->getAttribute('ajax');
+
         if ($field->getAttribute('field_type')) {
             $mappedField['field_type'] = $field->getAttribute('field_type');
         }
@@ -139,7 +145,7 @@ class FieldsMapper {
         if ($field->getAttribute('new_lines')) {
             $mappedField['new_lines'] = $field->getAttribute('new_lines');
         }
-        
+
         if ($field->getAttribute('rows')) {
             $mappedField['rows'] = $field->getAttribute('rows');
         }
