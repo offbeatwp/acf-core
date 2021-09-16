@@ -128,11 +128,13 @@ class FieldsMapper {
             $mappedField['multiple'] = $field->getAttribute('multiple');
         }
 
-        if ($field->getAttribute('ui'))
+        if ($field->getAttribute('ui')) {
             $mappedField['ui'] = $field->getAttribute('ui');
+        }
 
-        if ($field->getAttribute('ajax'))
+        if ($field->getAttribute('ajax')) {
             $mappedField['ajax'] = $field->getAttribute('ajax');
+        }
 
         if ($field->getAttribute('field_type')) {
             $mappedField['field_type'] = $field->getAttribute('field_type');

@@ -3,10 +3,9 @@ namespace OffbeatWP\AcfCore;
 
 use OffbeatWP\Form\Fields;
 use OffbeatWP\AcfCore\Fields\AcfField;
-use OffbeatWP\Form\Form;
 
 class FieldsMapperReverse {
-    public static function map(array $fields, Form $form)
+    public static function map(array $fields, $form)
     {
         if (!empty($fields)) {
             foreach ($fields as $field) {
