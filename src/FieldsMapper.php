@@ -215,6 +215,11 @@ class FieldsMapper {
                 $mappedField['taxonomy'] = $field->getAttribute('taxonomy');
                 $mappedField['return_format'] = 'id';
                 break;
+            case 'term':
+                $mappedField['taxonomy'] = $field->getAttribute('taxonomy');
+                $mappedField['return_format'] = 'id';
+                $mappedField['field_type'] = 'select';
+                break;
             case 'image':
                 $mappedField['return_format'] = 'id';
                 break;
@@ -261,6 +266,7 @@ class FieldsMapper {
                 $fieldType = 'post_object';
                 break;
             case 'terms':
+            case 'term':
                 $fieldType = 'taxonomy';
                 break;
         }
