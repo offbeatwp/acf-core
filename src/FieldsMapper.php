@@ -151,6 +151,14 @@ class FieldsMapper {
             $mappedField['rows'] = $field->getAttribute('rows');
         }
 
+        if ($field->getAttribute('min')) {
+            $mappedField['min'] = $field->getAttribute('min');
+        }
+
+        if ($field->getAttribute('max')) {
+            $mappedField['max'] = $field->getAttribute('max');
+        }
+
         if ($field->getAttribute('new_lines')) {
             $mappedField['new_lines'] = $field->getAttribute('new_lines');
         }
