@@ -147,6 +147,10 @@ class FieldsMapper {
             $mappedField['new_lines'] = $field->getAttribute('new_lines');
         }
 
+        if ($field->getAttribute('allowed_file_types')) {
+            $mappedField['mime_types'] = $field->getAttribute('allowed_file_types');
+        }
+
         if ($field->getAttribute('rows')) {
             $mappedField['rows'] = $field->getAttribute('rows');
         }
@@ -229,6 +233,7 @@ class FieldsMapper {
                 $mappedField['field_type'] = 'select';
                 break;
             case 'image':
+            case 'file':
                 $mappedField['return_format'] = 'id';
                 break;
             case 'flexible_content':
