@@ -1,7 +1,9 @@
 <?php
+
 namespace OffbeatWP\AcfCore;
 
-class FieldsMapper {
+class FieldsMapper
+{
     public $form = [];
     public $mappedFields = [];
     public $keyPrefix = '';
@@ -18,9 +20,9 @@ class FieldsMapper {
     public function map($form = null, bool $global = true): array
     {
         $root = false;
-        $mapping = [];        
+        $mapping = [];
 
-        if(is_null($form)) {
+        if ($form === null) {
             $root = true;
             $form = $this->fields;
         }
@@ -29,7 +31,7 @@ class FieldsMapper {
             $mapping[] = $this->mapField($form, $global);
         } else {
             $form->each(function ($entry) use (&$mapping, $global) {
-                switch($entry->getType()) {
+                switch ($entry->getType()) {
                     case 'form':
                         $formFields = $this->mapForm($entry, $global);
 
@@ -42,7 +44,7 @@ class FieldsMapper {
                                 }
                             }
                         }
-                        
+
                         break;
                     case 'tab':
                         $mapping[] = $this->mapTab($entry);
@@ -91,11 +93,11 @@ class FieldsMapper {
 
         $key = $field->getAttribute('key');
 
-        if (!$key) {
-            $key = $this->prefixId('field', $field->getId());
-        } else {
-            $prefix = !empty($this->keyPrefix) ? $this->keyPrefix . '_' : '';
+        if ($key) {
+            $prefix = ($this->keyPrefix) ? $this->keyPrefix . '_' : '';
             $key = $prefix . $key;
+        } else {
+            $key = $this->prefixId('field', $field->getId());
         }
 
         if ($this->getContext()) {
@@ -103,12 +105,12 @@ class FieldsMapper {
         }
 
         $mappedField = [
-            'key'           => $key,
-            'label'         => $field->getLabel(),
-            'name'          => $field->getId(),
-            '_name'         => $field->getId(),
-            'type'          => $this->mapFieldType($fieldType),
-            'required'      => 0,
+            'key' => $key,
+            'label' => $field->getLabel(),
+            'name' => $field->getId(),
+            '_name' => $field->getId(),
+            'type' => $this->mapFieldType($fieldType),
+            'required' => 0,
         ];
 
         if ($field->getAttribute('required')) {
@@ -250,26 +252,27 @@ class FieldsMapper {
                 }
 
                 break;
-         }
+        }
 
-         if (!empty($mappedField['conditional_logic'])) {
+        if (!empty($mappedField['conditional_logic'])) {
             $mappedField['conditional_logic'] = $this->transformKeysConditionalLogic($mappedField['conditional_logic']);
-         }
+        }
 
-         if ($returnFormat = $field->getAttribute('return_format')) {
+        $returnFormat = $field->getAttribute('return_format');
+        if ($returnFormat) {
             $mappedField['return_format'] = $returnFormat;
-         }
+        }
 
-         if ($global) {
-             $this->mappedFields[] = $mappedField;
-         }
+        if ($global) {
+            $this->mappedFields[] = $mappedField;
+        }
 
-            
+
         return $mappedField;
     }
 
     public function mapFieldType(string $fieldType, bool $global = true): string
-    {  
+    {
         switch ($fieldType) {
             case 'editor':
                 $fieldType = 'wysiwyg';
@@ -290,16 +293,16 @@ class FieldsMapper {
     public function mapSection($section, bool $global = true): array
     {
         $mappedSection = [
-           'key'           => $this->prefixId('section', $section->getId()),
-           'name'          => $section->getId(),
-           '_name'         => $section->getId(),
-           'label'         => $section->getLabel(),
-           'type'          => 'group',
-           'layout'        => 'block'
+            'key' => $this->prefixId('section', $section->getId()),
+            'name' => $section->getId(),
+            '_name' => $section->getId(),
+            'label' => $section->getLabel(),
+            'type' => 'group',
+            'layout' => 'block'
         ];
 
         if ($section->isNotEmpty()) {
-           $mappedSection['sub_fields'] = $this->map($section, false);
+            $mappedSection['sub_fields'] = $this->map($section, false);
         }
 
         if ($global) {
@@ -312,10 +315,10 @@ class FieldsMapper {
     public function mapTab($tab, bool $global = true): array
     {
         $mappedTab = [
-            'key'   => $this->prefixId('tab', $tab->getId()),
+            'key' => $this->prefixId('tab', $tab->getId()),
             'label' => $tab->getLabel(),
-            'name'  => '',
-            'type'  => 'tab',
+            'name' => '',
+            'type' => 'tab',
             'placement' => 'top',
             'endpoint' => 0
         ];
@@ -355,6 +358,7 @@ class FieldsMapper {
     }
 
     /**
+     * @private
      * @param string[][][] $conditionalLogic
      * @return string[][][]
      */
@@ -362,11 +366,13 @@ class FieldsMapper {
     {
         foreach ($conditionalLogic as $groupIndex => $conditions) {
             foreach ($conditions as $conditionIndex => $condition) {
-                $prefix = !empty($this->keyPrefix) ? $this->keyPrefix . '_' : '';
+                $prefix = ($this->keyPrefix) ? 'field_' . $this->keyPrefix . '_' : '';
                 $fieldKey = $prefix . $condition['field'];
-    
+
                 if ($this->getContext()) {
                     $fieldKey .= '_' . $this->getContext();
+                } else {
+                    $fieldKey .= '_block';
                 }
 
                 $conditions[$conditionIndex]['field'] = $fieldKey;
