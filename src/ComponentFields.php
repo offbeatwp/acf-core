@@ -21,7 +21,7 @@ class ComponentFields {
         }
 
         if (!empty($formFields)) {
-            $fieldsMapper = new FieldsMapper($formFields, $componentSettings['slug']);
+            $fieldsMapper = new FieldsMapper($formFields, $componentSettings['slug'], 'block');
             $mappedFields = $fieldsMapper->map();
 
             if (!empty($mappedFields)) {
