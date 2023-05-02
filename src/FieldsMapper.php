@@ -10,11 +10,18 @@ class FieldsMapper
     public $namePrefix = '';
     public $context = null;
     public $fields;
+    private $keySuffix;
 
-    public function __construct($form, string $keyPrefix = '')
+    /**
+     * @param $form
+     * @param string $keyPrefix
+     * @param string $keySuffix Only applied when translating keys for conditional logic
+     */
+    public function __construct($form, string $keyPrefix = '', string $keySuffix = '')
     {
         $this->fields = $form;
         $this->keyPrefix = $keyPrefix;
+        $this->keySuffix = $keySuffix;
     }
 
     public function map($form = null, bool $global = true): array
@@ -93,11 +100,12 @@ class FieldsMapper
 
         $key = $field->getAttribute('key');
 
-        if ($key) {
-            $prefix = ($this->keyPrefix) ? $this->keyPrefix . '_' : '';
-            $key = $prefix . $key;
-        } else {
-            $key = $this->prefixId('field', $field->getId());
+        if ($key && $this->keyPrefix) {
+            $key = $this->keyPrefix . '_' . $key;
+        }
+
+        if ($key && $this->keySuffix) {
+            $key .= '_' . $this->keySuffix;
         }
 
         if ($this->getContext()) {
