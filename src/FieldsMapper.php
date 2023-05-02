@@ -100,12 +100,11 @@ class FieldsMapper
 
         $key = $field->getAttribute('key');
 
-        if ($key && $this->keyPrefix) {
-            $key = $this->keyPrefix . '_' . $key;
-        }
-
-        if ($key && $this->keySuffix) {
-            $key .= '_' . $this->keySuffix;
+        if ($key) {
+            $prefix = ($this->keyPrefix) ? $this->keyPrefix . '_' : '';
+            $key = $prefix . $key;
+        } else {
+            $key = $this->prefixId('field', $field->getId());
         }
 
         if ($this->getContext()) {
@@ -376,6 +375,10 @@ class FieldsMapper
             foreach ($conditions as $conditionIndex => $condition) {
                 $prefix = ($this->keyPrefix) ? $this->keyPrefix . '_' : '';
                 $fieldKey = 'field_' . $prefix . $condition['field'];
+
+                if ($this->keySuffix) {
+                    $fieldKey .= '_' . $this->keySuffix;
+                }
 
                 if ($this->getContext()) {
                     $fieldKey .= '_' . $this->getContext();
