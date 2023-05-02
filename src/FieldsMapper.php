@@ -366,13 +366,11 @@ class FieldsMapper
     {
         foreach ($conditionalLogic as $groupIndex => $conditions) {
             foreach ($conditions as $conditionIndex => $condition) {
-                $prefix = ($this->keyPrefix) ? 'field_' . $this->keyPrefix . '_' : '';
-                $fieldKey = $prefix . $condition['field'];
+                $prefix = ($this->keyPrefix) ? $this->keyPrefix . '_' : '';
+                $fieldKey = 'field_' . $prefix . $condition['field'];
 
                 if ($this->getContext()) {
                     $fieldKey .= '_' . $this->getContext();
-                } else {
-                    $fieldKey .= '_block';
                 }
 
                 $conditions[$conditionIndex]['field'] = $fieldKey;
