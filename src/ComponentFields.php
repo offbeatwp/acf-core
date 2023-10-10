@@ -39,7 +39,7 @@ class ComponentFields {
     {
         $fieldGroups = acf_get_field_groups(['offbeatwp_component' => $component]);
 
-        if (empty($fieldGroups)) {
+        if (!$fieldGroups) {
             return null;
         }
 
@@ -48,7 +48,7 @@ class ComponentFields {
         foreach ($fieldGroups as $fieldGroup) {
             $fieldGroupFields = acf_get_fields($fieldGroup['key']);
 
-            if($fieldGroupFields) {
+            if ($fieldGroupFields) {
                 $fields = array_merge($fields, $fieldGroupFields);
             }
         }
