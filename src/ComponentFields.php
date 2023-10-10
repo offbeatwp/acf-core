@@ -1,10 +1,7 @@
 <?php
 namespace OffbeatWP\AcfCore;
 
-use OffbeatWP\Exceptions\NonexistentComponentException;
-
 class ComponentFields {
-    /** @throws NonexistentComponentException */
     public static function get(?string $componentId, ?string $suffix = ''): array
     {
         $fields = [];
@@ -16,22 +13,22 @@ class ComponentFields {
         $componentSettings = $component::settings();
 
         $formFields = $component::getForm();
-        if (empty($formFields)) {
+        if (!$formFields) {
             $formFields = [];
         }
 
-        if (!empty($formFields)) {
+        if ($formFields) {
             $fieldsMapper = new FieldsMapper($formFields, $componentSettings['slug'], 'block');
             $mappedFields = $fieldsMapper->map();
 
-            if (!empty($mappedFields)) {
+            if ($mappedFields) {
                 $fields = $mappedFields;
             }
         }
 
         $fields = self::normalizeFields($fields);        
 
-        if (!empty($suffix)) {
+        if ($suffix) {
             $fields = self::suffixFieldKeys($fields, $suffix);
         }
 
@@ -42,7 +39,7 @@ class ComponentFields {
     {
         $fieldGroups = acf_get_field_groups(['offbeatwp_component' => $component]);
 
-        if (empty($fieldGroups)) {
+        if (!$fieldGroups) {
             return null;
         }
 
@@ -51,7 +48,7 @@ class ComponentFields {
         foreach ($fieldGroups as $fieldGroup) {
             $fieldGroupFields = acf_get_fields($fieldGroup['key']);
 
-            if(!empty($fieldGroupFields)) {
+            if($fieldGroupFields) {
                 $fields = array_merge($fields, $fieldGroupFields);
             }
         }
@@ -61,16 +58,14 @@ class ComponentFields {
 
     public static function normalizeFields(array $fields): array
     {
-        if (!empty($fields)) {
-            foreach ($fields as $fieldKey => $field) {
+        foreach ($fields as $fieldKey => $field) {
 
-                if (isset($field['parent'])) {
-                    unset($fields[$fieldKey]['parent']);
-                }
+            if (isset($field['parent'])) {
+                unset($fields[$fieldKey]['parent']);
+            }
 
-                if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
-                    $fields[$fieldKey]['sub_fields'] = self::normalizeFields($field['sub_fields']);
-                }
+            if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
+                $fields[$fieldKey]['sub_fields'] = self::normalizeFields($field['sub_fields']);
             }
         }
 
@@ -80,16 +75,14 @@ class ComponentFields {
 
     public static function suffixFieldKeys(array $fields, string $suffix): array
     {
-        if (!empty($fields)) {
-            foreach ($fields as $fieldKey => $field) {
+        foreach ($fields as $fieldKey => $field) {
 
-                if (isset($field['key'])) {
-                    $fields[$fieldKey]['key'] .= "_{$suffix}";
-                }
+            if (isset($field['key'])) {
+                $fields[$fieldKey]['key'] .= "_{$suffix}";
+            }
 
-                if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
-                    $fields[$fieldKey]['sub_fields'] = self::suffixFieldKeys($field['sub_fields'], $suffix);
-                }
+            if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
+                $fields[$fieldKey]['sub_fields'] = self::suffixFieldKeys($field['sub_fields'], $suffix);
             }
         }
 
