@@ -2,8 +2,13 @@
 
 namespace OffbeatWP\AcfCore;
 
+use OffbeatWP\Form\Fields\AbstractField;
+use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
+use OffbeatWP\Form\Form;
+
 class FieldsMapper
 {
+    /** @var Form|null[] */
     public $form = [];
     public $mappedFields = [];
     public $keyPrefix = '';
@@ -13,7 +18,7 @@ class FieldsMapper
     private $keySuffix;
 
     /**
-     * @param $form
+     * @param Form $form
      * @param string $keyPrefix
      * @param string $keySuffix Only applied when translating keys for conditional logic
      */
@@ -24,6 +29,11 @@ class FieldsMapper
         $this->keySuffix = $keySuffix;
     }
 
+    /**
+     * @param Form|AbstractField|AbstractFieldsContainer|null $form
+     * @param bool $global
+     * @return mixed
+     */
     public function map($form = null, bool $global = true): array
     {
         $root = false;
@@ -72,6 +82,11 @@ class FieldsMapper
         return $mapping;
     }
 
+    /**
+     * @param Form $form
+     * @param bool $global
+     * @return mixed[]
+     */
     public function mapForm($form, bool $global = true): array
     {
         $idPrefixes = [];
@@ -88,6 +103,11 @@ class FieldsMapper
         return $fieldsMapper->map();
     }
 
+    /**
+     * @param AbstractField $field
+     * @param bool $global
+     * @return mixed[]
+     */
     public function mapField($field, bool $global): array
     {
         $fieldType = $field->getType();
@@ -295,6 +315,11 @@ class FieldsMapper
         return $fieldType;
     }
 
+    /**
+     * @param AbstractFieldsContainer $section
+     * @param bool $global
+     * @return array{key: string, name: string, _name: string, label: string, type: 'group', layout: 'block', sub_fields: mixed[]}
+     */
     public function mapSection($section, bool $global = true): array
     {
         $mappedSection = [
@@ -317,6 +342,11 @@ class FieldsMapper
         return $mappedSection;
     }
 
+    /**
+     * @param AbstractFieldsContainer $tab
+     * @param bool $global
+     * @return array{key: string, label: string, name: '', type: 'tab', placement: 'top', endpoint: int}
+     */
     public function mapTab($tab, bool $global = true): array
     {
         $mappedTab = [
@@ -342,7 +372,6 @@ class FieldsMapper
     public function prefixId(string $type, string $key): string
     {
         $prefix = ($this->keyPrefix) ? '_' . $this->keyPrefix : '';
-
         return $type . $prefix . '_' . $key;
     }
 
