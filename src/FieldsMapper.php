@@ -400,8 +400,11 @@ class FieldsMapper
     {
         foreach ($conditionalLogic as $groupIndex => $conditions) {
             foreach ($conditions as $conditionIndex => $condition) {
-                $prefix = ($this->keyPrefix) ? $this->keyPrefix . '_' : '';
-                $fieldKey = 'field_' . $prefix . $condition['field'];
+                $fieldKey = $condition['field'];
+
+                if ($this->keyPrefix) {
+                    $fieldKey = $this->keyPrefix . '_' . $fieldKey;
+                }
 
                 if ($this->keySuffix) {
                     $fieldKey .= '_' . $this->keySuffix;
@@ -411,7 +414,7 @@ class FieldsMapper
                     $fieldKey .= '_' . $this->getContext();
                 }
 
-                $conditions[$conditionIndex]['field'] = $fieldKey;
+                $conditions[$conditionIndex]['field'] = 'field_' . $fieldKey;
             }
 
             $conditionalLogic[$groupIndex] = $conditions;
