@@ -42,13 +42,11 @@ class FieldsMapper
                     case 'form':
                         $formFields = $this->mapForm($entry, $global);
 
-                        if (!empty($formFields)) {
-                            foreach ($formFields as $formField) {
-                                if ($global) {
-                                    $this->mappedFields[] = $formField;
-                                } else {
-                                    $mapping[] = $formField;
-                                }
+                        foreach ($formFields as $formField) {
+                            if ($global) {
+                                $this->mappedFields[] = $formField;
+                            } else {
+                                $mapping[] = $formField;
                             }
                         }
 
@@ -253,7 +251,7 @@ class FieldsMapper
             case 'acffield':
                 $acfFieldContent = $field->getAttribute('acffield');
 
-                if (!empty($acfFieldContent) && is_array($acfFieldContent)) {
+                if ($acfFieldContent && is_array($acfFieldContent)) {
                     unset($acfFieldContent['key']);
                     $mappedField = array_merge($mappedField, $acfFieldContent);
                 }
@@ -343,14 +341,14 @@ class FieldsMapper
 
     public function prefixId(string $type, string $key): string
     {
-        $prefix = !empty($this->keyPrefix) ? '_' . $this->keyPrefix : '';
+        $prefix = ($this->keyPrefix) ? '_' . $this->keyPrefix : '';
 
         return $type . $prefix . '_' . $key;
     }
 
     public function prefixName(string $name): string
     {
-        $prefix = !empty($this->namePrefix) ? $this->namePrefix . '_' : '';
+        $prefix = ($this->namePrefix) ? $this->namePrefix . '_' : '';
         return $prefix . $name;
     }
 
