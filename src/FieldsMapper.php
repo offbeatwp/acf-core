@@ -32,7 +32,7 @@ class FieldsMapper
     /**
      * @param Form|AbstractField|AbstractFieldsContainer|null $form
      * @param bool $global
-     * @return mixed
+     * @return mixed[]
      */
     public function map($form = null, bool $global = true): array
     {
