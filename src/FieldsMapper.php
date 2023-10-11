@@ -94,7 +94,7 @@ class FieldsMapper
         $idPrefixes[] = $form->getFieldPrefix();
         $idPrefixes = array_filter($idPrefixes);
 
-        $fieldsMapper = new self($form, implode('_', $idPrefixes));
+        $fieldsMapper = new self($form, implode('_', $idPrefixes), $this->keySuffix);
 
         if ($this->getContext()) {
             $fieldsMapper->setContext($this->getContext());
