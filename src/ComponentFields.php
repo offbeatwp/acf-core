@@ -5,21 +5,17 @@ class ComponentFields {
     public static function get(?string $componentId, ?string $suffix = ''): array
     {
         $fields = [];
-        $component = offbeat('components')->get($componentId);
+        $componentClass = offbeat('components')->get($componentId);
 
-        if (!method_exists($component, 'settings')) {
+        if (!method_exists($componentClass, 'settings')) {
             return [];
         }
-        $componentSettings = $component::settings();
 
-        $formFields = $component::getForm();
-        if (!$formFields) {
-            $formFields = [];
-        }
+        $componentSettings = $componentClass::settings();
+        $form = $componentClass::getForm();
 
-        if ($formFields) {
-            $fieldsMapper = new FieldsMapper($formFields, $componentSettings['slug'], 'block');
-            $mappedFields = $fieldsMapper->map();
+        if ($form) {
+            $mappedFields = (new FieldsMapper($form, $componentSettings['slug'], 'block'))->map();
 
             if ($mappedFields) {
                 $fields = $mappedFields;
@@ -29,7 +25,7 @@ class ComponentFields {
         $fields = self::normalizeFields($fields);        
 
         if ($suffix) {
-            $fields = self::suffixFieldKeys($fields, $suffix);
+            $fields = self::suffixFieldKeys($fields, $suffix); //TODO: <---- Causes issues but also fixes some
         }
 
         return $fields;
@@ -83,6 +79,7 @@ class ComponentFields {
                 $fields[$fieldKey]['sub_fields'] = self::suffixFieldKeys($field['sub_fields'], $suffix);
             }
 
+            // TODO: Block below causes conflicts
             if (isset($field['conditional_logic']) && is_array($field['conditional_logic'])) {
                 foreach ($field['conditional_logic'] as $conditionalLogicIndex => $conditionalLogicRules) {
                     foreach ($conditionalLogicRules as $conditionalLogicRuleKey => $conditionalLogicRule) {
