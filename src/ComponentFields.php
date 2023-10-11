@@ -78,15 +78,6 @@ class ComponentFields {
             if (isset($field['sub_fields']) && is_array($field['sub_fields'])) {
                 $fields[$fieldKey]['sub_fields'] = self::suffixFieldKeys($field['sub_fields'], $suffix);
             }
-
-            // TODO: Block below causes conflicts with some conditional logic in components
-            if (isset($field['conditional_logic']) && is_array($field['conditional_logic'])) {
-                foreach ($field['conditional_logic'] as $conditionalLogicIndex => $conditionalLogicRules) {
-                    foreach ($conditionalLogicRules as $conditionalLogicRuleKey => $conditionalLogicRule) {
-                        $fields[$fieldKey]['conditional_logic'][$conditionalLogicIndex][$conditionalLogicRuleKey]['field'] .= "_{$suffix}";
-                    }
-                }
-            }
         }
 
         return $fields;
