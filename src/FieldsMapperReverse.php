@@ -79,6 +79,18 @@ class FieldsMapperReverse {
                     $formField = Fields\Image::make($field['name'], $field['label']);
                     break;
 
+                case 'time_picker':
+                    $formField = Fields\TimePicker::make($field['name'], $field['label']);
+                    break;
+
+                case 'date_picker':
+                    $formField = Fields\DatePicker::make($field['name'], $field['label']);
+                    break;
+
+                case 'date_time_picker':
+                    $formField = Fields\DateTimePicker::make($field['name'], $field['label']);
+                    break;
+
                 default:
                     $formField = AcfField::make($field['name'], $field['label']);
                     $formField->setAttribute('acffield', $field);
@@ -96,6 +108,10 @@ class FieldsMapperReverse {
 
                 if (isset($field['layout'])) {
                     $formField->setAttribute('layout', $field['layout']);
+                }
+
+                if (isset($field['display_format'])) {
+                    $formField->setAttribute('display_format', $field['display_format']);
                 }
 
                 if (isset($field['return_format'])) {
