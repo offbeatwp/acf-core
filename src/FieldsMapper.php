@@ -4,6 +4,8 @@ namespace OffbeatWP\AcfCore;
 
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
+use OffbeatWP\Form\FieldsContainers\Section;
+use OffbeatWP\Form\FieldsContainers\Tab;
 use OffbeatWP\Form\Form;
 
 class FieldsMapper
@@ -316,7 +318,7 @@ class FieldsMapper
     }
 
     /**
-     * @param AbstractFieldsContainer $section
+     * @param Section $section
      * @param bool $global
      * @return array{key: string, name: string, _name: string, label: string, type: 'group', layout: 'block', sub_fields: mixed[]}
      */
@@ -343,7 +345,7 @@ class FieldsMapper
     }
 
     /**
-     * @param AbstractFieldsContainer $tab
+     * @param Tab $tab
      * @param bool $global
      * @return array{key: string, label: string, name: '', type: 'tab', placement: 'top', endpoint: int}
      */
@@ -364,6 +366,11 @@ class FieldsMapper
 
         if ($tab->isNotEmpty()) {
             $this->map($tab);
+        }
+
+        $conditionalLogic = $tab->getAttribute('conditional_logic');
+        if ($conditionalLogic) {
+            $mappedTab['conditional_logic'] = $this->transformKeysConditionalLogic($conditionalLogic);
         }
 
         return $mappedTab;
