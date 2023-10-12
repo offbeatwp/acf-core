@@ -283,6 +283,10 @@ class FieldsMapper
             $mappedField['conditional_logic'] = $this->transformKeysConditionalLogic($mappedField['conditional_logic']);
         }
 
+        if ($field->getAttribute('display_format')) {
+            $mappedField['display_format'] = $field->getAttribute('display_format');
+        }
+
         $returnFormat = $field->getAttribute('return_format');
         if ($returnFormat) {
             $mappedField['return_format'] = $returnFormat;
